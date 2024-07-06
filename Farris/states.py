@@ -42,7 +42,6 @@ class QuantumState:
         self.state_vector = state_vector
         # self.normalize()
 
-
     def normalize(self) -> None:
         norm = np.sqrt(sum([abs(x) ** 2 for x in self.state_vector]))
         if norm == 0:
