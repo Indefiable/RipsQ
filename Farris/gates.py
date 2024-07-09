@@ -22,6 +22,36 @@ class QuantumGate:
     
 
 
+class Gate(QuantumGate):
+    
+    def __init__(self, matrix=np.array([[0,0],[0,0]]), dtype=qtype) -> None:
+        super().__init__(num_qubits=1)
+        self.nmatrix = matrix
+        
+        
+    def reset_matrix(self, matrix):
+        if(matrix.shape() == 2 **(self.num_qubits)):
+            self.nmatrix = matrix
+            return
+        print("wrong dimension dumdum.")
+    
+    def matrix(self) -> np.ndarray:
+        return self.nmatrix if not self._dagger else np.matrix.getH(self.nmatrix)
+
+    def whatdagger(self) -> None:
+        self._dagger = True
+
+    def is_dagger(self) ->bool:
+        return self._dagger
+    
+    def add(self, gate):
+        return Gate(matrix=(self.matrix() + gate.matrix()))
+    
+    def scale(self, scalar):
+        return Gate(matrix= (scalar * self.matrix()))
+    
+    
+    
 class Identity(QuantumGate):
     def __init__(self) -> None:
         super().__init__(num_qubits=1)
@@ -30,12 +60,21 @@ class Identity(QuantumGate):
         # Define the Hadamard matrix for a single qubit
         hadamard = np.array([[1, 0], [0, 1]], dtype=qtype)
         return hadamard if not self._dagger else np.matrix.getH(hadamard)
+    
+    def __str__(self) -> str:
+        return "I"
 
     def dagger(self) -> None:
         self._dagger = True
 
     def is_dagger(self) ->bool:
         return self._dagger
+    
+    def add(self, gate1):
+        return Gate(matrix=(self.matrix() + gate1.matrix()))
+    
+    def scale(self, scalar):
+        return Gate(matrix= (scalar * self.matrix()))
     
 
 
@@ -54,6 +93,12 @@ class Hadamard(QuantumGate):
     def is_dagger(self) ->bool:
         return self._dagger
     
+    def add(self, gate1):
+        return Gate(matrix=(self.matrix() + gate1.matrix()))
+    
+    def scale(self, scalar):
+        return Gate(matrix= (scalar * self.matrix()))
+    
 
 
 
@@ -67,6 +112,12 @@ class PauliX(QuantumGate):
 
     def __str__(self) -> str:
         return "X"
+    
+    def add(self, gate1):
+        return Gate(matrix=(self.matrix() + gate1.matrix()))
+    
+    def scale(self, scalar):
+        return Gate(matrix= (scalar * self.matrix()))
     
 
 
@@ -82,6 +133,12 @@ class PauliY(QuantumGate):
     def __str__(self) -> str:
         return "Y"
     
+    def add(self, gate1):
+        return Gate(matrix=(self.matrix() + gate1.matrix()))
+    
+    def scale(self, scalar):
+        return Gate(matrix= (scalar * self.matrix()))
+    
 
 
 class PauliZ(QuantumGate):
@@ -94,6 +151,14 @@ class PauliZ(QuantumGate):
 
     def __str__(self) -> str:
         return "Z"
+    
+    def add(self, gate1):
+        return Gate(matrix=(self.matrix() + gate1.matrix()))
+    
+    def scale(self, scalar):
+        return Gate(matrix= (scalar * self.matrix()))
+    
+    
 
 
 
