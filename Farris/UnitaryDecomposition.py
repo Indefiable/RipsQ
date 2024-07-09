@@ -18,8 +18,7 @@ from gates import *
 from states import *
 import re
 import numpy as np
-import math
-qtype=np.complex64
+
 
 
 
