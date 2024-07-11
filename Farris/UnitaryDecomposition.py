@@ -7,7 +7,6 @@ Created on Mon Jul  8 08:27:33 2024
 Unitary decomposition implementation
 
 
-
 """
 
 import os
@@ -71,8 +70,8 @@ delta=.2
 
 K0 = I.scale(np.sqrt(p))
 K1 = Z.scale(np.sqrt(1-p))
-
 K3 = Gate(matrix=np.array([[1+1j, 0],[0,2]]))
+
 
 rights = []
 diffs = []
