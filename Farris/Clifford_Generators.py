@@ -12,11 +12,10 @@ hard code in {X,Y,Z,H,S}
 
 for C in cliffords:
     for K in cliffords:
-        if CK not in cliffords up to phase shift, add CK to cliffords
-        
-        if |cliffords| >= 24
-            stop
+        if CK or KC not in cliffords up to phase shift, add CK/KC to cliffords
 
+The CLiffords form a group, so eventually we should stop because we keep getting
+the same matrices..
 """
 
 import os
@@ -28,10 +27,13 @@ from states import *
 import re
 import numpy as np
 import cmath
-
+import math
 
 
 def equal(C, K):
+   
+    if(np.allclose(C,K)):
+        return True
     
     K1 = np.linalg.inv(K)
     matt = np.matmul(C,K1)
@@ -39,12 +41,12 @@ def equal(C, K):
     # this is why the code is so slow. estimating equality of matrices up to phase
     # by iterating through all possible phases, [0,2pi] / 800 and checking for 
     #equality up to error 1e^-1. 
-    values = np.linspace(0, 2*np.pi, num=800, endpoint=True)
+    values = np.linspace(0, 2*math.pi, num=8000, endpoint=False)
     
     for theta in values:
         phase = Identity().scale(cmath.exp(1j*theta)).matrix()
         
-        if (np.allclose(matt, phase, atol=1e-1)):
+        if (np.allclose(matt, phase,atol=1e-3)):
             return True
     
     return False
@@ -80,6 +82,29 @@ def equal(C, K):
     return np.allclose(C_normalized, K_normalized, atol=1e-8)
    """
 
+def look(C, cliffs):
+    for K in cliffs:
+        
+        if len(cliffs) == 24:
+            return
+        
+        newMat1 = np.matmul(C,K)
+        newMat2 = np.matmul(K,C)
+        
+        for newMat in [newMat1, newMat2]:
+            alreadyIn = False
+            
+            for cliff in cliffs:
+                if equal(cliff,newMat):
+                    alreadyIn = True
+                    break
+                
+            if not alreadyIn:
+                cliffs.append(newMat)
+                look(newMat, cliffs)
+                print('+++')
+                print(len(cliffs))
+                print('+++')
 
 
 I = Identity().matrix()
@@ -87,35 +112,24 @@ X = PauliX().matrix()
 Y = PauliY().matrix()
 Z = PauliZ().matrix()
 H = Hadamard().matrix()
-S = Phase().matrix()
+P = Phase().matrix()
 
-cliffs = [X,Y,Z,H,S]
+cliffs = [H,P]
 
-for i in range(len(cliffs)):
-    print(i)
-    C = cliffs[i]
-    for K in cliffs:
-        newMat = np.matmul(C,K)
-        alreadyIn = False
-        
-        for cliff in cliffs:
-            if equal(cliff,newMat):
-                alreadyIn = True
-                break
-            
-        if not alreadyIn:
-            cliffs.append(newMat)
-            print(len(cliffs))
-            
-    print('=======')
+print( equal(I, Identity().scale(cmath.exp(1j*np.pi/2000)).matrix()) )
+
+look(H, cliffs)
 
 
+np.save('C:\\Users\\Brand\\Documents\\IPAM\\Research\\Problem_1\\farris.npy',cliffs)
 print(len(cliffs))
 
 print('===================')
 for cliff in cliffs:
     print(cliff)
     print('=====')
+
+
 
         
         
