@@ -32,10 +32,21 @@ S = Phase().matrix()
 
 class StabState:
     
-    def __init__(self, state_name='0', recordState=True):
+    def __init__(self, state_name='0', recordState=True, scalar=1, stab=None):
+        if stab is not None:
+            self.record=stab.record
+            self.state_name=stab.state_name
+            self.scalar=stab.scalar
+            if self.record:
+                self.state=stab.state
+            self.stabilizer_group=stab.stabilizer_group
+            return
+        
         self.record=recordState
         self.state_name = state_name
-        if(RecordState):
+        self.scalar = scalar
+        
+        if(recordState):
             self.state = self.initialize_state(state_name)
         else:
             self.state=None
@@ -61,6 +72,9 @@ class StabState:
         else:
             raise ValueError("Invalid state name")
     
+    def set_stab_group(self,group):
+        
+        self.stabilizer_group=group
     
     def initialize_stabilizer_group(self, state_name):
         if state_name == '0':
@@ -82,6 +96,10 @@ class StabState:
         # Apply the gate to the state
         if self.record:
             self.state = gate @ self.state
+            self.state = self.state / np.linalg.norm(self.state)
+            
+            if not np.isclose(np.inner(self.state.conj(), self.state), 1):
+                print("State is not normalized.")
         
         # Update the stabilizer group
         self.stabilizer_group = [gate @ stab @ np.linalg.inv(gate) for stab in self.stabilizer_group]

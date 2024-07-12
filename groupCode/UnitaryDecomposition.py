@@ -121,7 +121,6 @@ k = math.ceil(k)
 #randomly sampling k generator indices with weights |c[i]| / Cnorm
     
 indices = np.arange(0, len(c))  # Creates an index array [0, a+1, ..., len(c)-1]
-
 probabilities = [(np.abs(c[i]) / Cnorm) for i in range(len(c))]
 probabilities = probabilities / (sum(probabilities))
 
